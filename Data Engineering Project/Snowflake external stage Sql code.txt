@@ -1,0 +1,120 @@
+--Database creation
+create or replace database adventureworks_db;
+
+--Schema Creation
+create or replace schema data_schema;
+
+--Table Structure Creation
+create or replace table customer_table(CustomerKey int ,FirstName varchar,LastName varchar,BirthDate date,MaritalStatus varchar,Gender varchar,EmailAddress varchar,AnnualIncome int,TotalChildren int,EducationLevel varchar,Occupation varchar,HomeOwner varchar);
+
+create or replace table product_table(ProductKey int,ProductSubcategoryKey int,ProductSKU varchar,ProductName varchar,ModelName varchar,ProductDescription varchar,ProductColor varchar,ProductSize varchar,ProductCost float,ProductPrice float
+);
+
+
+create or replace table product_subcategory_table(ProductSubcategoryKey int,SubcategoryName varchar,ProductCategoryKey int);
+
+
+create or replace table return_product_table(ReturnDate date,TerritoryKey int,ProductKey int,ReturnQuantity int);
+
+
+create or replace table sales_2020_table(OrderDate date,StockDate date,OrderNumber varchar,ProductKey int,CustomerKey int,TerritoryKey int,OrderLineItem int,OrderQuantity int);
+
+
+create or replace table sales_2021_table(OrderDate date,StockDate date,OrderNumber varchar,ProductKey int,CustomerKey int,TerritoryKey int,OrderLineItem int,OrderQuantity int);
+
+create or replace table sales_2022_table(OrderDate date,StockDate date,OrderNumber varchar,ProductKey int,CustomerKey int,TerritoryKey int,OrderLineItem int,OrderQuantity int);
+
+
+create or replace table territory_table(SalesTerritoryKey int ,Region varchar,Country varchar,Continent varchar);
+
+
+create or replace table product_category_table(ProductCategoryKey int,CategoryName varchar);
+ 
+
+
+
+
+--External Staging Azure
+
+use database adventureworks_db;
+
+use schema data_schema;
+
+create or replace stage azure_stage
+url='azure://adventureworksstoredata.blob.core.windows.net/online-store-data/Datatables'
+credentials= (azure_sas_token=<Sas token>);
+
+show stages;
+
+
+list @azure_stage;
+
+create or replace FILE FORMAT CSV TYPE='CSV' COMPRESSION='AUTO' FIELD_DELIMITER=',' SKIP_HEADER=1 ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE ;
+
+
+
+
+
+
+
+-- Load data from dbo_Product_Category_Table.txt
+COPY INTO Product_Category_Table
+FROM @azure_stage/dbo.Product_Category_Table.txt
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+
+SELECT * FROM PRODUCT_CATEGORY_TABLE;
+
+-- Load data from dbo_Customer_Table.csv
+COPY INTO Customer_Table
+FROM @azure_stage/dbo_Customer_Table.csv
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+SELECT * FROM CUSTOMER_TABLE;
+
+-- Load data from dbo_Product_Subcategory_Table.csv
+COPY INTO Product_Subcategory_Table
+FROM @azure_stage/dbo_Product_Subcategory_Table.csv
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+-- Load data from dbo_Product_Table.csv
+COPY INTO Product_Table
+FROM @azure_stage/dbo_Product_Table.csv
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+-- Load data from dbo_Return_Product_Table.csv
+COPY INTO Return_Product_Table
+FROM @azure_stage/dbo_Return_Product_Table.csv
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+-- Load data from dbo_Sales_2020_Table.csv
+COPY INTO Sales_2020_Table
+FROM @azure_stage/dbo_Sales_2020_Table.csv
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+-- Load data from dbo_Sales_2021_Table.csv
+COPY INTO Sales_2021_Table
+FROM @azure_stage/dbo_Sales_2021_Table.csv
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+-- Load data from dbo_Sales_2022_Table.csv
+COPY INTO Sales_2022_Table
+FROM @azure_stage/dbo_Sales_2022_Table.csv
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+-- Load data from dbo_Territory_Table.csv
+COPY INTO Territory_Table
+FROM @azure_stage/dbo_Territory_Table.csv
+FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
+
+
+
+select * from SALES_2020_TABLE;
+
+
+
+
+
+
+
+
