@@ -1,0 +1,16 @@
+Resource group name: Sample-DE-Project
+
+storage account name: adventureworksstoredata
+
+container name: online-store-data
+
+data factory name: adventureworks-ssm-blob-sf
+
+Pipeline name: data-ingestion
+
+data factory:
+
+sql server source name: SqlServerdata
+
+snow-dataengineer
+p:dataengineer@123
