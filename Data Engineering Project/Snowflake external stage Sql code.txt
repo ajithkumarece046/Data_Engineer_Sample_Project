@@ -112,6 +112,18 @@ FILE_FORMAT = (TYPE = CSV) ON_ERROR ='CONTINUE';
 select * from SALES_2020_TABLE;
 
 
+--Transformations
+
+use database adventureworks_db;
+
+use schema data_schema;
+
+create or replace table Sales_Table as (
+
+select * from sales_2020_table union select * from sales_2021_table union select * from sales_2022_table);
+
+select * from sales_table;
+
 
 
 
